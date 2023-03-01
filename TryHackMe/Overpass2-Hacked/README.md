@@ -14,7 +14,7 @@ So we know that the attacker has uploaded some kind of payload to a web server. 
 
 *(Note: HTTP transmits data in plaintext; however, in the real world, you are more likely to run into the encrypted version known as HTTPS as it is far more secure and keeps data private.)* <br>
 ![image](https://user-images.githubusercontent.com/85798849/222154541-e10bdb04-8dd1-46c6-8779-fb970c6bb297.png)
-Now that we only see HTTP traffic, we now see an interesting POST request which contains the URL of the page that the attacker uploaded the payload to. <br>
+Now that we've filtered for HTTP traffic, we now see an interesting POST request which contains the URL of the page that the attacker uploaded the payload to. <br>
 
 *(Note: An HTTP POST request is used to send data to a server to create/update a resource.)*
 
@@ -23,16 +23,19 @@ Now that we only see HTTP traffic, we now see an interesting POST request which 
 ### 2. What payload did the attacker use to gain access?
 *(Note: A payload refers to malicious programs/code an attacker can use to steal, damage, or gain unauthorized access to data/systems.)* <br>
 
-To find this payload, let's refer to the POST request packet we found earlier. If we right-click the packet and **Follow -> TCP Stream**, we are now presented with the TCP conversation to include the plaintext data. <br>
+To find this payload, let's refer to the POST request packet we found earlier. If we right-click the packet and **Follow -> TCP Stream**, we are now presented with the entire TCP conversation to include the plaintext data. <br>
 ![image](https://user-images.githubusercontent.com/85798849/222185577-96666b95-4be3-4688-9c41-a303e297f837.png)
 
 
 ---
 
-**Q:** What password did the attacker use to privesc? \
-**Mindset:** \
-**Answer:** `whenevernoteartinstant` \
-**Explaination:**
+### 3. What password did the attacker use to privesc?
+
+
+
+*(Note: The PSH flag in the TCP header informs the receiving host that the data should be pushed to the receiving application immediately. In this case, the data being pushed to the application would be the CLI commands)*
+
+---
 
 **Q:** How did the attacker establish persistence? \
 **Mindset:** \
