@@ -31,21 +31,36 @@ To find this payload, let's refer to the POST request packet we found earlier. I
 
 ### 3. What password did the attacker use to privesc?
 
+In the last task, we were able to find and observe the payload. If we analyze the payload, it shows that the reverse shell will connect to port 4242. So let's filter for port 4242 to get the unnecessary traffic out of the way using `tcp.port == 4242` <br>
+Now, let's go ahead and **Follow -> TCP Stream** on any of the packets. <br>
+![image](https://user-images.githubusercontent.com/85798849/222744414-e8ebb640-d184-4e01-b20d-a0641de9983a.png) <br>
+We can now easily identify the password that the attacker used to privilege escalate. <br>
 
-
-*(Note: The PSH flag in the TCP header informs the receiving host that the data should be pushed to the receiving application immediately. In this case, the data being pushed to the application would be the CLI commands)*
+*(Note: The PSH flag in the TCP header informs the receiving host that the data should be pushed to the receiving application immediately. In this case, the data being pushed to the application would be the CLI commands that the attacker is entering.)* <br>
 
 ---
 
-**Q:** How did the attacker establish persistence? \
-**Mindset:** \
-**Answer:** `https://github.com/NinjaJc01/ssh-backdoor` \
-**Explaination:**
+### 4. How did the attacker establish persistence? 
 
-**Q:** Using the fasttrack wordlist, how many of the system passwords were crackable? \
-**Mindset:** \
-**Answer:** `4` \
-**Explaination:**
+In the last task, we opened up the TCP stream showing us all of the commands that the attacker had used. <br>
+In case you've forgotten, we can filter for `tcp.port == 4242` and **Follow -> TCP Stream** on any of the packets to display the attackers commands. <br>
+*Hint: Attackers can establish persistence by creating a backdoor.*
+
+### 5. Using the fasttrack wordlist, how many of the system passwords were crackable? 
+
+In the same TCP stream, we can see that the attacker has dumped the /etc/shadow file. <br>
+*(Note: The shadow file is a text file in Linux, accessible only by the root user, that contains usernames, hashed passwords, and other user properties.)* <br>
+
+Copy the shadow file contents and save it in a new text file on your kali machine. Now we can invite our friend "John the Ripper" to try and crack these hashed passwords. <br>
+*(Note: John the Ripper is a popular open source password cracking tool)*
+
+```console
+# Crack passwords using fasttrack.txt
+kali@kali:~/thm/overpass2$ sudo john -wordlist=/usr/share/wordlists/fasttrack.txt shadow.txt
+# Show cracked passwords
+kali@kali:~/thm/overpass2$ sudo john --show shadow.txt
+```
+You should now be presented with the cracked hashes! 
 
 ## Task 2 - *Research - Analyse the code*
 
