@@ -103,20 +103,5 @@ In this case, we are using `-a 0` which specifies "Straight" mode. Which is more
 
 ## Task 3 - *Attack - Get back in!*
 
-**Q:** The attacker defaced the website. What message did they leave as a heading? \
-**Mindset:** \
-**Answer:** `H4ck3d by CooctusClan` \
-**Explaination:**
-
-### Using the information you've found previously, hack your way back in!
-
-**Q:** What's the user flag? \
-**Mindset:** \
-**Answer:** `thm{d119b4fa8c497ddb0525f7ad200e6567}` \
-**Explaination:**
-
-**Q:** What's the root flag? \
-**Mindset:** \
-**Answer:** `thm{d53b2684f169360bb9606c333873144d}` \
-**Explaination:**
+### Work in progress...
 
