@@ -4,7 +4,7 @@
 
 This CTF assumes that the Overpass production server was hacked. The goal is to figure out how the attacker was able to get in, hack your way back into the server, and identify any artifacts left behind. 
 
-*(Note: This CTF expects you to be familiar with using CLI tools, Linux, and Wireshark, but I will explain the best that I can as we walk through this room.)* <br>
+*(Note: This CTF expects you to be familiar with coding/code analysis, using CLI tools, Linux, and Wireshark, but I will explain the best that I can as we walk through this room.)* <br>
 
 ## Task 1 - *Forensics - Analyse the PCAP*
 
@@ -46,6 +46,8 @@ In the last task, we opened up the TCP stream showing us all of the commands tha
 In case you've forgotten, we can filter for `tcp.port == 4242` and **Follow -> TCP Stream** on any of the packets to display the attackers commands. <br>
 *Hint: Attackers can establish persistence by creating a backdoor.*
 
+---
+
 ### 5. Using the fasttrack wordlist, how many of the system passwords were crackable? 
 
 In the same TCP stream, we can see that the attacker has dumped the /etc/shadow file. <br>
@@ -64,25 +66,40 @@ You should now be presented with the cracked hashes!
 
 ## Task 2 - *Research - Analyse the code*
 
-**Q:** What's the default hash for the backdoor? \
-**Mindset:** \
-**Answer:** `bdd04d9bb7621687f5df9001f5098eb22bf19eac4c2c30b6f23efed4d24807277d0f8bfccb9e77659103d78c56e66d2d7d8391dfc885d0e9b68acd01fc2170e3` \
-**Explaination:**
+### 1. What's the default hash for the backdoor? <br>
 
-**Q:** What's the hardcoded salt for the backdoor? \
-**Mindset:** \
-**Answer:** `1c362db832f3f864c8c2fe05f2002a05` \
-**Explaination:**
+We can answer this question by analyzing the code that the attacker used. In Task 1 Question 4, we identified the link to the malicious code that the attacker utilized. If we copy and paste that link in a web browser, we are presented with a github repo. If we open up `main.go`, we can find what we are looking for near the top of the code. <br>
+![image](https://user-images.githubusercontent.com/85798849/222906092-b2b2bd2d-a7f4-4b53-8101-52d5dbfaa8e3.png) <br>
 
-**Q:** What was the hash that the attacker used? - go back to the PCAP for this! \
-**Mindset:** \
-**Answer:** `6d05358f090eea56a238af02e47d44ee5489d234810ef6240280857ec69712a3e5e370b8a41899d0196ade16c0d54327c5654019292cbfe0b5e98ad1fec71bed` \
-**Explaination:**
+### 2. What's the hardcoded salt for the backdoor? <br>
 
-**Q:** Crack the hash using rockyou and a cracking tool of your choice. What's the password? \
-**Mindset:** \
-**Answer:** `november16` \
-**Explaination:**
+If we analyze the code in main.go, we come across a few functions. Pay close attention to the `verifyPass` function. We notice that it accepts 3 different parameters. One of these parameters happens to be `salt`. Let's now find where this function was utilized. Github allows us to click on user-created functions and easily view any references to the function in the code. Alternatively, you could <kbd>Ctrl</kbd> + <kbd>F</kbd> and type in the function name to find references. <br>
+![image](https://user-images.githubusercontent.com/85798849/222906747-b619c7f7-58aa-498e-b586-6ac8d6d99df6.png) <br>
+We now see how the function was called in the code and the parameters given.
+
+### 3. What was the hash that the attacker used? - go back to the PCAP for this! <br>
+
+If we go back to the PCAP in wireshark and analyze that previous TCP stream displaying the CLI commands that the attacker had used, we can see that the attacker ran the backdoor program with an option `-a` followed by some long text that looks like it could be a hash. <br>
+![image](https://user-images.githubusercontent.com/85798849/222907187-0b7f86af-105c-4b67-886c-91188b142dd9.png) <br>
+
+
+### 4. Crack the hash using rockyou and a cracking tool of your choice. What's the password? <br>
+
+Let's crack this hash using the rockyou.txt password list and the hashcat cracking tool. But first, we should identify what type of hashing algorithm was possibly used. You can copy and paste the hash onto https://hashes.com/en/tools/hash_identifier <br>
+
+Second, let's identify the `hashtype` option we will have to use with hashcat to successfully crack the hash. <br>
+We can refer to the man page for hashcat on the terminal or at https://hashcat.net/wiki/doku.php?id=example_hashes to identify the hashtype we must use. <br>
+
+Finally, In our kali terminal, let's run hashcat using the hashtype, hash:salt, and rockyou.txt <br>
+
+`$ hashcat -m <hashtype> -a 0 -o crack.txt 'hash:salt' /usr/share/wordlists/rockyou.txt --force` <br>
+`-m` option is to specify the hash type. <br>
+`-a` option is to specify the attack mode. <br>
+In this case, we are using `-a 0` which specifies "Straight" mode. Which is more commonly known as a Dictionary attack. <br>
+`-o` option is to output the results to a specified file. If the file does not exist, it will be created. <br>
+`--force` option is just to ignore warnings. <br>
+
+*(Note: Make sure you're using the hash that the attacker used and not the default hash.)*
 
 ## Task 3 - *Attack - Get back in!*
 
