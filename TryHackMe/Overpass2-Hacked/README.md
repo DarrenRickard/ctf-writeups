@@ -68,7 +68,7 @@ You should now be presented with the cracked hashes!
 
 ### 1. What's the default hash for the backdoor? <br>
 
-We can answer this question by analyzing the code that the attacker used. In Task 1 Question 4, we identified the link to the malicious code that the attacker utilized. If we copy and paste that link in a web browser, we are presented with a github repo. If we open up `main.go`, we can find what we are looking for near the top of the code. <br>
+We can answer this question by analyzing the code that the attacker used. In Task 1 Question 4, we identified the link to the malicious code that the attacker utilized. If we copy and paste that link in a web browser, we are presented with a github repo. If we open up `main.go`, we can find a variable that is definitely of interest to this question. <br>
 ![image](https://user-images.githubusercontent.com/85798849/222906092-b2b2bd2d-a7f4-4b53-8101-52d5dbfaa8e3.png) <br>
 
 ### 2. What's the hardcoded salt for the backdoor? <br>
