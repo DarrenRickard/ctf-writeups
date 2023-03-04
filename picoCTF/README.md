@@ -1,1 +1,0 @@
-# picoCTF - CTF Writeups

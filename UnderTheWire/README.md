@@ -1,1 +1,0 @@
-# UnderTheWire - CTF Writeups
